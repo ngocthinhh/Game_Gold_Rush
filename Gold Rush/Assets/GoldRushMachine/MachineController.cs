@@ -7,9 +7,9 @@ public class MachineController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKey(KeyCode.Space))
-        {
-            GetComponent<Animator>().Play("Rush");
-        }
+        //if (Input.GetKey(KeyCode.Space))
+        //{
+        //    GetComponent<Animator>().Play("Rush");
+        //}
     }
 }

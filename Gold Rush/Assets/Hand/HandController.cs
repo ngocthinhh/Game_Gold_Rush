@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class HandController : MonoBehaviour
 {
@@ -26,6 +27,27 @@ public class HandController : MonoBehaviour
 
     [SerializeField]
     private TMP_Text moneyToString;
+
+    public int targetMoney = 0;
+
+    [SerializeField]
+    private TMP_Text targetMoneyToString;
+    //
+
+    // TIME
+    public float minute = 2f;
+
+    public float second = 30f;
+
+    [SerializeField]
+    private TMP_Text timeToString;
+
+    bool stopTime = false;
+    //
+
+    // BOARD GAMEOVER
+    [SerializeField]
+    private GameObject boardGameOver;
     //
 
     // ANIMATOR MACHINE
@@ -33,22 +55,21 @@ public class HandController : MonoBehaviour
     private MachineController machineController;
     //
 
-    //
-    //public string find = "finding";
-    //GameObject gold;
-    //
 
     private void Awake()
     {
         initPositionHand = transform.position;
-        //gold = GameObject.Find("Gold");
+
+        // SET TARGET MONEY
+        targetMoneyToString.text = "Target Money: " + targetMoney;
+        //
     }
 
     // Update is called once per frame
     void Update()
     {
-        GetComponent<LineRenderer>().SetPosition(0, new Vector3(-2.5f,2.5f,0));
-        GetComponent<LineRenderer>().SetPosition(1, new Vector3(transform.position.x, transform.position.y, 1));
+        GetComponent<LineRenderer>().SetPosition(0, new Vector3(-2.5f,2.5f,-2));
+        GetComponent<LineRenderer>().SetPosition(1, new Vector3(transform.position.x, transform.position.y, -2));
 
         switch(step)
         {
@@ -63,6 +84,7 @@ public class HandController : MonoBehaviour
                 transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
                 break;
             case 2:
+                machineController.GetComponent<Animator>().Play("Rush");
                 if (transform.position.y < -4.72 || transform.position.x < -10.4 || transform.position.x > 10.4)
                 {
                     step = 3;
@@ -71,6 +93,7 @@ public class HandController : MonoBehaviour
                 Launch(Time.deltaTime);
                 break;
             case 3:
+                machineController.GetComponent<Animator>().Play("Rush");
                 if (transform.position.y > initPositionHand.y)
                 {
                     moneyToString.text = "Money: " + money;
@@ -87,10 +110,30 @@ public class HandController : MonoBehaviour
             step = 2;
         }
 
-        //if (find == "finded")
-        //{ 
-        //    gold.GetComponent<Transform>().position = new Vector3(transform.position.x, transform.position.y, 1);
-        //}
+        // COUNT TIME
+        if (stopTime == false)
+        {
+            second -= Time.deltaTime;
+            if (second < 0)
+            {
+                second = 59;
+                minute -= 1;
+            }
+        }
+        
+        if (minute < 0)
+        {
+            timeToString.text = "TIME UP !!!";
+            stopTime = true;
+            boardGameOver.SetActive(true);
+            gameObject.GetComponent<HandController>().enabled = false;
+        }
+        else
+        {
+            timeToString.text = "Time: " + ((int)minute).ToString("00") + ":" + ((int)second).ToString("00");
+
+        }
+        //
 
     }
 
@@ -108,5 +151,10 @@ public class HandController : MonoBehaviour
     {
         step = 3;
         goldController = collision.gameObject.GetComponent<GoldController>();
+    }
+
+    public void Restart()
+    {
+        SceneManager.LoadScene("SampleScene");
     }
 }

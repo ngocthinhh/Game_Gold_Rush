@@ -46,7 +46,7 @@ public class GoldController : MonoBehaviour
 
         if (find == "finded")
         {
-            transform.position = new Vector3(Hand.transform.position.x, Hand.transform.position.y, 1);
+            transform.position = new Vector3(Hand.transform.position.x, Hand.transform.position.y, 0f);
             if (handController.step == 1)
             {
                 handController.slowSpeed = 0;
